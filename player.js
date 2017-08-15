@@ -583,6 +583,8 @@ sampleplayer.CastPlayer.prototype.preloadVideo_ = function(mediaInformation) {
   var self = this;
   var url = mediaInformation.contentId;
   var protocolFunc = sampleplayer.getProtocolFunction_(mediaInformation);
+  var initStart = mediaInformation.message.currentTime;
+  console.log("media information", mediaInformation);
   if (!protocolFunc) {
     this.log_('No protocol found for preload');
     return false;
@@ -599,7 +601,7 @@ sampleplayer.CastPlayer.prototype.preloadVideo_ = function(mediaInformation) {
     self.log_('Error during preload');
   };
   self.preloadPlayer_ = new cast.player.api.Player(host);
-  self.preloadPlayer_.preload(protocolFunc(host));
+  self.preloadPlayer_.preload(protocolFunc(host), initStart);
   return true;
 };
 
@@ -797,6 +799,8 @@ sampleplayer.CastPlayer.prototype.loadVideo_ = function(info) {
   var protocolFunc = null;
   var url = info.message.media.contentId;
   var protocolFunc = sampleplayer.getProtocolFunction_(info.message.media);
+  var initStart = info.message.currentTime;
+  console.dir("media information", info);
   var wasPreloaded = false;
 
   this.letPlayerHandleAutoPlay_(info);
@@ -835,7 +839,7 @@ sampleplayer.CastPlayer.prototype.loadVideo_ = function(info) {
       });
       host.onError = loadErrorCallback;
       this.player_ = new cast.player.api.Player(host);
-      this.player_.load(protocolFunc(host));
+      this.player_.load(protocolFunc(host), initStart);
     } else {
       this.log_('Preloaded video load');
       this.player_ = this.preloadPlayer_;
